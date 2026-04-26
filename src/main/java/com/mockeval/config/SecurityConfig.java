@@ -23,7 +23,17 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+
+                        // Public
                         .requestMatchers("/auth/**", "/users/**").permitAll()
+
+                        // Admin only
+                        .requestMatchers("/batch/**", "/technology/**").hasAuthority("ADMIN")
+
+                        // Evaluator only
+                        .requestMatchers("/evaluations/**").hasAnyAuthority("ADMIN", "EVALUATOR")
+
+                        // All other
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
