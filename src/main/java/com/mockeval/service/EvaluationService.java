@@ -30,4 +30,17 @@ public class EvaluationService {
     public List<Evaluation> getAll() {
         return repo.findAll();
     }
+
+    public List<Evaluation> getByTechnology(Long techId) {
+        return repo.findByTechnology(techId);
+    }
+
+    public Double getAverageScore() {
+        List<Evaluation> list = repo.findAll();
+
+        return list.stream()
+                .mapToDouble(Evaluation::getScore)
+                .average()
+                .orElse(0.0);
+    }
 }
