@@ -1,0 +1,25 @@
+# Maven build
+target/
+*.jar
+*.war
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# Spring Boot
+HELP.md
+
+# Environment (VERY IMPORTANT)
+application.properties
