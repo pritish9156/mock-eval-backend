@@ -1,5 +1,6 @@
 package com.mockeval.service;
 
+import com.mockeval.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -30,22 +31,22 @@ public class AssignmentService {
         // Fetch full Participant
         Participant participant = participantRepo.findById(
                 assignment.getParticipant().getId()
-        ).orElseThrow(() -> new RuntimeException("Participant not found"));
+        ).orElseThrow(() -> new CustomException("Participant not found"));
 
         // Fetch full Evaluator
         User evaluator = userRepo.findById(
                 assignment.getEvaluator().getId()
-        ).orElseThrow(() -> new RuntimeException("Evaluator not found"));
+        ).orElseThrow(() -> new CustomException("Evaluator not found"));
 
         // Fetch full Technology
         Technology technology = techRepo.findById(
                 assignment.getTechnology().getId()
-        ).orElseThrow(() -> new RuntimeException("Technology not found"));
+        ).orElseThrow(() -> new CustomException("Technology not found"));
 
         // Fetch full Round
         EvaluationRound round = roundRepo.findById(
                 assignment.getRound().getId()
-        ).orElseThrow(() -> new RuntimeException("Round not found"));
+        ).orElseThrow(() -> new CustomException("Round not found"));
 
         // Set full objects
         assignment.setParticipant(participant);

@@ -1,5 +1,6 @@
 package com.mockeval.service;
 
+import com.mockeval.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -16,6 +17,11 @@ public class UserService {
     private UserRepository userRepo;
 
     public User save(User user) {
+
+        if (userRepo.findByEmail(user.getEmail()) != null) {
+            throw new CustomException("Email already exists");
+        }
+
         return repo.save(user);
     }
 
@@ -28,7 +34,7 @@ public class UserService {
         User user = userRepo.findByEmail(email);
 
         if (user == null || !user.getPassword().equals(password)) {
-            throw new RuntimeException("Invalid credentials");
+            throw new CustomException("Invalid email or password");
         }
 
         return user;
