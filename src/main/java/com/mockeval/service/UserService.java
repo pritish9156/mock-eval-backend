@@ -1,9 +1,10 @@
 package com.mockeval.service;
 
-import com.mockeval.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+
 import com.mockeval.entity.User;
 import com.mockeval.repository.UserRepository;
 
@@ -13,30 +14,52 @@ public class UserService {
     @Autowired
     private UserRepository repo;
 
-    @Autowired
-    private UserRepository userRepo;
-
-    public User save(User user) {
-
-        if (userRepo.findByEmail(user.getEmail()) != null) {
-            throw new CustomException("Email already exists");
-        }
-
-        return repo.save(user);
-    }
-
-    public List<User> getAll() {
-        return repo.findAll();
-    }
-
     public User login(String email, String password) {
 
-        User user = userRepo.findByEmail(email);
+        User user = repo.findByEmail(email);
 
-        if (user == null || !user.getPassword().equals(password)) {
-            throw new CustomException("Invalid email or password");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        if (!user.getPassword().equals(password)) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        if (!user.isActive()) {
+            throw new RuntimeException("User is deactivated");
         }
 
         return user;
+    }
+
+    // CREATE
+    public User save(User user) {
+        return repo.save(user);
+    }
+
+    // READ ONLY ACTIVE USERS
+    public List<User> getAll() {
+        return repo.findByActiveTrue(); // ✅ IMPORTANT FIX
+    }
+
+    // DEACTIVATE USER (SOFT DELETE)
+    public void deactivate(Long id) {
+        User user = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setActive(false);
+        repo.save(user);
+    }
+
+    // UPDATE
+    public User update(Long id, User user) {
+        user.setId(id);
+        return repo.save(user);
+    }
+
+    // LOGIN SUPPORT
+    public User findByEmail(String email) {
+        return repo.findByEmail(email);
     }
 }
