@@ -23,4 +23,15 @@ public class UserController {
     public List<User> getAll() {
         return service.getAll();
     }
+
+    @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        repo.deleteById(id);
+    }
+
+    @PutMapping("/users/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody User user) {
+        user.setId(id);
+        return repo.save(user);
+    }
 }
