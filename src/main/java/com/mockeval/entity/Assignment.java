@@ -23,5 +23,5 @@ public class Assignment {
     private Technology technology;
 
     @ManyToOne
-    private EvaluationRound round;
+    private Round round;
 }

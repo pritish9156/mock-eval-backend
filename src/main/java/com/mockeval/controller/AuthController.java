@@ -25,13 +25,19 @@ public class AuthController {
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody LoginRequest request) {
 
-        User user = userService.login(request.getEmail(), request.getPassword());
+        try {
+            User user = userService.login(request.getEmail(), request.getPassword());
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
+            String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
 
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
 
-        return response;
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace(); // 🔥 VERY IMPORTANT
+            throw new RuntimeException("Login failed: " + e.getMessage());
+        }
     }
 }

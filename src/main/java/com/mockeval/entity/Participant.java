@@ -14,5 +14,17 @@ public class Participant {
     private Long id;
 
     private String name;
+
+    @Column(unique = true)
     private String email;
+
+    // 🔥 RELATION WITH BATCH
+    @ManyToOne
+    @JoinColumn(name = "batch_id")
+    private Batch batch;
+
+    // 🔥 RELATION WITH TECHNOLOGY
+    @ManyToOne
+    @JoinColumn(name = "technology_id")
+    private Technology technology;
 }

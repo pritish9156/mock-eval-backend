@@ -15,15 +15,40 @@ public class TechnologyService {
 
     public Technology save(Technology tech) {
 
-        if (repo.findAll().stream()
-                .anyMatch(t -> t.getName().equalsIgnoreCase(tech.getName()))) {
-            throw new CustomException("Technology already exists");
+        Technology existing = repo.findByName(tech.getName());
+
+        if (existing != null) {
+
+            if (!existing.getActive()) {
+                existing.setActive(true); // 🔥 REACTIVATE
+                return repo.save(existing);
+            }
+
+            throw new RuntimeException("Technology already exists ❌");
         }
 
+        tech.setActive(true);
         return repo.save(tech);
     }
 
     public List<Technology> getAll() {
-        return repo.findAll();
+        return repo.findByActiveTrue();
+    }
+
+    public void deactivate(Long id) {
+        Technology t = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Technology not found"));
+
+        t.setActive(false);
+        repo.save(t);
+    }
+
+    public Technology update(Long id, Technology updated) {
+        Technology existing = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Technology not found"));
+
+        existing.setName(updated.getName());
+
+        return repo.save(existing);
     }
 }

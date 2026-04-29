@@ -1,6 +1,7 @@
 package com.mockeval.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,9 @@ public class UserService {
     @Autowired
     private UserRepository repo;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public User login(String email, String password) {
 
         User user = repo.findByEmail(email);
@@ -22,7 +26,7 @@ public class UserService {
             throw new RuntimeException("User not found");
         }
 
-        if (!user.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
 
@@ -35,6 +39,7 @@ public class UserService {
 
     // CREATE
     public User save(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // 🔥 FIX
         return repo.save(user);
     }
 
@@ -53,9 +58,21 @@ public class UserService {
     }
 
     // UPDATE
-    public User update(Long id, User user) {
-        user.setId(id);
-        return repo.save(user);
+    public User updateUser(Long id, User updatedUser) {
+
+        User existing = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // ✅ Always update
+        existing.setName(updatedUser.getName());
+        existing.setEmail(updatedUser.getEmail());
+
+        // 🔥 FIX: Only update password if provided
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+            existing.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
+
+        return repo.save(existing);
     }
 
     // LOGIN SUPPORT

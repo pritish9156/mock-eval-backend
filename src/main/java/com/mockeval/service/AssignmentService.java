@@ -24,31 +24,27 @@ public class AssignmentService {
     private TechnologyRepository techRepo;
 
     @Autowired
-    private EvaluationRoundRepository roundRepo;
+    private RoundRepository roundRepo;
 
     public Assignment save(Assignment assignment) {
 
-        // Fetch full Participant
         Participant participant = participantRepo.findById(
                 assignment.getParticipant().getId()
         ).orElseThrow(() -> new CustomException("Participant not found"));
 
-        // Fetch full Evaluator
         User evaluator = userRepo.findById(
                 assignment.getEvaluator().getId()
         ).orElseThrow(() -> new CustomException("Evaluator not found"));
 
-        // Fetch full Technology
         Technology technology = techRepo.findById(
                 assignment.getTechnology().getId()
         ).orElseThrow(() -> new CustomException("Technology not found"));
 
-        // Fetch full Round
-        EvaluationRound round = roundRepo.findById(
+        // 🔥 FIXED HERE
+        Round round = roundRepo.findById(
                 assignment.getRound().getId()
         ).orElseThrow(() -> new CustomException("Round not found"));
 
-        // Set full objects
         assignment.setParticipant(participant);
         assignment.setEvaluator(evaluator);
         assignment.setTechnology(technology);

@@ -16,11 +16,20 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+
 @Configuration
 public class SecurityConfig {
 
     @Autowired
     private JwtFilter jwtFilter;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -45,8 +54,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/users/**").permitAll()
-                        .requestMatchers("/batch/**", "/technology/**").hasAuthority("ADMIN")
-                        .requestMatchers("/evaluations/**").hasAnyAuthority("ADMIN", "EVALUATOR")
+                        .requestMatchers("/batch", "/batch/**").hasAuthority("ADMIN")
+                        .requestMatchers("/technology", "/technology/**").hasAuthority("ADMIN")
+                        .requestMatchers("/evaluations", "/evaluations/**")
+                        .hasAnyAuthority("ADMIN", "EVALUATOR")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

@@ -1,7 +1,10 @@
 package com.mockeval.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -16,4 +19,9 @@ public class Batch {
     private String name;
     private String startDate;
     private String endDate;
+    private Boolean active = true;
+
+    @OneToMany(mappedBy = "batch")
+    @JsonIgnore   // 🔥 ADD THIS
+    private List<Round> rounds;
 }

@@ -23,4 +23,14 @@ public class BatchController {
     public List<Batch> getAll() {
         return service.getAll();
     }
+
+    @PutMapping("/{id}")
+    public Batch update(@PathVariable Long id, @RequestBody Batch batch) {
+        return service.update(id, batch);
+    }
+
+    @PutMapping("/deactivate/{id}")
+    public void deactivate(@PathVariable Long id) {
+        service.deactivate(id);
+    }
 }

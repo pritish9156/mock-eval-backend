@@ -23,4 +23,14 @@ public class TechnologyController {
     public List<Technology> getAll() {
         return service.getAll();
     }
+
+    @PutMapping("/{id}")
+    public Technology update(@PathVariable Long id, @RequestBody Technology tech) {
+        return service.update(id, tech);
+    }
+
+    @PutMapping("/deactivate/{id}")
+    public void deactivate(@PathVariable Long id) {
+        service.deactivate(id);
+    }
 }
