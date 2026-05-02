@@ -18,6 +18,8 @@ public class Participant {
     @Column(unique = true)
     private String email;
 
+    private Boolean active = true;
+
     // 🔥 RELATION WITH BATCH
     @ManyToOne
     @JoinColumn(name = "batch_id")

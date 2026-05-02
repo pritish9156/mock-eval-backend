@@ -39,7 +39,22 @@ public class UserService {
 
     // CREATE
     public User save(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // 🔥 FIX
+
+        User existing = repo.findByEmail(user.getEmail());
+
+        if (existing != null) {
+
+            if (!existing.isActive()) {
+                existing.setActive(true);   // 🔥 REACTIVATE
+                existing.setName(user.getName()); // optional update
+                return repo.save(existing);
+            }
+
+            throw new RuntimeException("Email already exists ❌");
+        }
+
+        user.setActive(true);
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // if using encoding
         return repo.save(user);
     }
 

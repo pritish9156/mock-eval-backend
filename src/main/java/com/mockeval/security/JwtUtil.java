@@ -20,7 +20,7 @@ public class JwtUtil {
                 .setSubject(email)
                 .claim("role", role) // 🔥 ADD ROLE
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 8))
                 .signWith(key)
                 .compact();
     }

@@ -1,11 +1,14 @@
 package com.mockeval.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 import com.mockeval.entity.*;
 import com.mockeval.repository.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class EvaluationService {
@@ -16,31 +19,59 @@ public class EvaluationService {
     @Autowired
     private AssignmentRepository assignmentRepo;
 
-    public Evaluation save(Evaluation evaluation) {
+    // 🔥 SAVE EVALUATION
+    @Transactional
+    public Evaluation save(Evaluation e) {
 
         Assignment assignment = assignmentRepo.findById(
-                evaluation.getAssignment().getId()
+                e.getAssignment().getId()
         ).orElseThrow(() -> new RuntimeException("Assignment not found"));
 
-        evaluation.setAssignment(assignment);
+        assignment.setActive(false);
+        assignmentRepo.saveAndFlush(assignment);
 
-        return repo.save(evaluation);
+        Evaluation newE = new Evaluation();
+
+        newE.setScore(e.getScore());
+        newE.setFeedback(e.getFeedback());
+
+        newE.setStrengths(e.getStrengths());
+        newE.setWeaknesses(e.getWeaknesses());
+        newE.setPlan(e.getPlan());
+
+        newE.setAssignment(assignment);
+        newE.setEvaluationTime(LocalDateTime.now());
+        newE.setActive(true);
+        newE.setEvaluated(true);
+
+        return repo.save(newE);
+    }
+
+    // 🔥 GET FOR EVALUATOR
+    public List<Evaluation> getByEvaluator(Long evaluatorId) {
+        return repo.findByAssignmentEvaluatorId(evaluatorId);
     }
 
     public List<Evaluation> getAll() {
-        return repo.findAll();
+        return repo.findByActiveTrue();
     }
 
-    public List<Evaluation> getByTechnology(Long techId) {
-        return repo.findByTechnology(techId);
-    }
+    public List<Evaluation> getReport(Long batchId, Long techId) {
 
-    public Double getAverageScore() {
-        List<Evaluation> list = repo.findAll();
+        List<Evaluation> all = repo.findAll();
 
-        return list.stream()
-                .mapToDouble(Evaluation::getScore)
-                .average()
-                .orElse(0.0);
+        return all.stream()
+                .filter(e -> batchId == null ||
+                        (e.getAssignment() != null &&
+                                e.getAssignment().getParticipant() != null &&
+                                e.getAssignment().getParticipant().getBatch() != null &&
+                                e.getAssignment().getParticipant().getBatch().getId().equals(batchId))
+                )
+                .filter(e -> techId == null ||
+                        (e.getAssignment() != null &&
+                                e.getAssignment().getTechnology() != null &&
+                                e.getAssignment().getTechnology().getId().equals(techId))
+                )
+                .toList();
     }
 }

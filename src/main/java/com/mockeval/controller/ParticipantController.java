@@ -23,4 +23,14 @@ public class ParticipantController {
     public List<Participant> getAll() {
         return service.getAll();
     }
+
+    @PutMapping("/{id}")
+    public Participant update(@PathVariable Long id, @RequestBody Participant p) {
+        return service.update(id, p);
+    }
+
+    @PutMapping("/deactivate/{id}")
+    public void deactivate(@PathVariable Long id) {
+        service.deactivate(id);
+    }
 }

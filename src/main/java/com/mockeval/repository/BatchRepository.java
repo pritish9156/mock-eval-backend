@@ -8,4 +8,6 @@ import java.util.List;
 public interface BatchRepository extends JpaRepository<Batch, Long> {
 
     List<Batch> findByActiveTrue();
+    Batch findByName(String name);
+    Batch findByNameAndStartDate(String name, String startDate);
 }

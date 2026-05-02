@@ -13,6 +13,23 @@ public class BatchService {
     private BatchRepository repo;
 
     public Batch save(Batch batch) {
+
+        Batch existing = repo.findByNameAndStartDate(
+                batch.getName(),
+                batch.getStartDate()
+        );
+
+        if (existing != null) {
+
+            if (!existing.getActive()) {
+                existing.setActive(true);
+                existing.setEndDate(batch.getEndDate());
+                return repo.save(existing);
+            }
+
+            throw new RuntimeException("Batch already exists ❌");
+        }
+
         batch.setActive(true);
         return repo.save(batch);
     }

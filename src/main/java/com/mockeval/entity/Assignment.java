@@ -13,15 +13,21 @@ public class Assignment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    private Boolean active = true;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "participant_id")
     private Participant participant;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "evaluator_id")
     private User evaluator;
 
-    @ManyToOne
-    private Technology technology;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "round_id")
     private Round round;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "technology_id")
+    private Technology technology;
 }

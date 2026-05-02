@@ -20,7 +20,7 @@ public class Round {
     private String name;
 
     @Column(name = "round_number")
-    private int roundNumber;
+    private Integer roundNumber;
 
     @JsonProperty(defaultValue = "true")
     private Boolean active = true; // 🔥 NEW

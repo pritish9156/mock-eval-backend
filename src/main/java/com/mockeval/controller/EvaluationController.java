@@ -1,50 +1,55 @@
 package com.mockeval.controller;
 
-import com.mockeval.util.CsvUtil;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 import com.mockeval.entity.Evaluation;
 import com.mockeval.service.EvaluationService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
-@RequestMapping("/evaluations")
+@RequestMapping("/evaluation")
 @CrossOrigin
 public class EvaluationController {
 
     @Autowired
     private EvaluationService service;
 
+    // CREATE
     @PostMapping
-    public Evaluation create(@RequestBody Evaluation evaluation) {
-        return service.save(evaluation);
+    public Evaluation create(@RequestBody Evaluation eval) {
+
+        if (eval.getStrengths() == null)
+            eval.setStrengths(new ArrayList<>());
+
+        if (eval.getWeaknesses() == null)
+            eval.setWeaknesses(new ArrayList<>());
+
+        if (eval.getPlan() == null)
+            eval.setPlan(new ArrayList<>());
+
+        return service.save(eval);
     }
 
+    // ADMIN VIEW
     @GetMapping
     public List<Evaluation> getAll() {
         return service.getAll();
     }
 
-    @GetMapping("/technology/{id}")
-    public List<Evaluation> getByTechnology(@PathVariable Long id) {
-        return service.getByTechnology(id);
+    // EVALUATOR VIEW
+    @GetMapping("/evaluator/{id}")
+    public List<Evaluation> getByEvaluator(@PathVariable Long id) {
+        return service.getByEvaluator(id);
     }
 
-    @GetMapping("/average")
-    public Double getAverage() {
-        return service.getAverageScore();
-    }
-
-    @GetMapping("/export")
-    public void exportCsv(HttpServletResponse response) throws Exception {
-
-        response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment; filename=report.csv");
-
-        List<Evaluation> list = service.getAll();
-
-        CsvUtil.writeToCsv(response.getWriter(), list);
+    @GetMapping("/report")
+    public List<Evaluation> getReport(
+            @RequestParam(required = false) Long batchId,
+            @RequestParam(required = false) Long techId
+    ) {
+        return service.getReport(batchId, techId);
     }
 }
