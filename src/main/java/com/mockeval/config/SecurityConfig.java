@@ -56,6 +56,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**", "/users/**").permitAll()
                         .requestMatchers("/batch", "/batch/**").hasAuthority("ADMIN")
                         .requestMatchers("/technology", "/technology/**").hasAuthority("ADMIN")
+                        .requestMatchers("/admin/approve").permitAll()
                         .requestMatchers("/evaluations", "/evaluations/**")
                         .hasAnyAuthority("ADMIN", "EVALUATOR")
                         .anyRequest().authenticated()

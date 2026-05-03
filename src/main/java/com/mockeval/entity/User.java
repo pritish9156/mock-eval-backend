@@ -26,6 +26,8 @@ public class User {
     @Column(nullable = false)
     private boolean active = true; // ✅ IMPORTANT
 
+    private boolean mustChangePassword = false;
+
     // GETTERS & SETTERS
 
     public Long getId() {
@@ -74,5 +76,13 @@ public class User {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public boolean isMustChangePassword() {
+        return mustChangePassword;
+    }
+
+    public void setMustChangePassword(boolean mustChangePassword) {
+        this.mustChangePassword = mustChangePassword;
     }
 }

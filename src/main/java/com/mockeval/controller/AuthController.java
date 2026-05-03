@@ -54,7 +54,7 @@ public class AuthController {
         response.put("userId", user.getId());   // 🔥 ADD
         response.put("role", user.getRole()); // 🔥 ADD
         response.put("email", user.getEmail());
-
+        response.put("mustChangePassword", user.isMustChangePassword());
         return response;
     }
 
@@ -119,5 +119,24 @@ public class AuthController {
         tokenRepo.save(token);
 
         return ResponseEntity.ok("Password reset successful");
+    }
+
+    @PostMapping("/force-reset-password")
+    public ResponseEntity<?> forceResetPassword(
+            @RequestBody Map<String, String> req,
+            @RequestHeader("Authorization") String authHeader
+    ) {
+
+        String email = jwtUtil.extractEmail(authHeader.substring(7));
+        User user = userRepo.findByEmail(email);
+
+        user.setPassword(passwordEncoder.encode(req.get("password")));
+
+// 🔥 IMPORTANT
+        user.setMustChangePassword(false);
+
+        userRepo.save(user);
+
+        return ResponseEntity.ok("Password updated");
     }
 }
